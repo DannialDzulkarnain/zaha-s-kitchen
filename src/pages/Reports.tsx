@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
 import { Calendar, Download, Sparkles, TrendingUp, AlertTriangle } from 'lucide-react';
-import { Order, InventoryItem } from '../types';
-import { getBusinessInsights } from '../geminiService';
+import { Order, InventoryItem } from '@/types';
+import { getBusinessInsights } from '@/services/geminiService';
 
 interface ReportsProps {
   orders: Order[];

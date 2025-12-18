@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { Package, AlertTriangle, ArrowUpRight, ArrowDownRight, RefreshCw } from 'lucide-react';
-import { InventoryItem } from '../types';
+import { InventoryItem } from '@/types';
 
 interface InventoryManagementProps {
   inventory: InventoryItem[];

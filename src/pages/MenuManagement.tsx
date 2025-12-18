@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import { Plus, Search, Edit2, Trash2, X, Filter, Clock, ShieldAlert } from 'lucide-react';
-import { MenuItem, Category } from '../types';
+import { MenuItem, Category } from '@/types';
 
 interface MenuManagementProps {
   items: MenuItem[];

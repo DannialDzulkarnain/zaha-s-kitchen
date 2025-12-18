@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { ChefHat, Clock, CheckCircle, Play, MessageSquare, Timer } from 'lucide-react';
-import { Order, OrderStatus } from '../types';
+import { Order, OrderStatus } from '@/types';
 
 interface KitchenProps {
   orders: Order[];

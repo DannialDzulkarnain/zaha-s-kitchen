@@ -1,10 +1,24 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
-import { Order, InventoryItem } from "./types";
+import { Order, InventoryItem } from "@/types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+function getClient() {
+  const key = process.env.API_KEY || process.env.GEMINI_API_KEY;
+  if (!key) return null;
+  try {
+    return new GoogleGenAI({ apiKey: key });
+  } catch (error) {
+    console.error("Failed to init Gemini client", error);
+    return null;
+  }
+}
 
 export async function getBusinessInsights(orders: Order[], inventory: InventoryItem[]) {
+  const client = getClient();
+  if (!client) {
+    console.warn("Skipping AI insights: missing GEMINI_API_KEY");
+    return null;
+  }
+
   const prompt = `
     As an expert cafe consultant, analyze the following cafe data and provide actionable business insights.
     
@@ -18,7 +32,7 @@ export async function getBusinessInsights(orders: Order[], inventory: InventoryI
   `;
 
   try {
-    const response = await ai.models.generateContent({
+    const response = await client.models.generateContent({
       model: "gemini-3-flash-preview",
       contents: prompt,
       config: {

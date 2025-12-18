@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import { ClipboardList, Search, Filter, ArrowRight, CheckCircle2, XCircle, Clock, MoreVertical } from 'lucide-react';
-import { Order, OrderStatus } from '../types';
+import { Order, OrderStatus } from '@/types';
 
 interface OrdersListProps {
   orders: Order[];

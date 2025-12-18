@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   ShoppingCart, 
@@ -20,8 +19,8 @@ import {
   AlertCircle,
   Send
 } from 'lucide-react';
-import { MenuItem, Category, Order, OrderItem, OrderType, PaymentMethod, InventoryItem } from '../types';
-import { TAX_RATE } from '../constants';
+import { MenuItem, Category, Order, OrderItem, OrderType, PaymentMethod, InventoryItem } from '@/types';
+import { TAX_RATE } from '@/data/mockData';
 
 interface POSProps {
   menuItems: MenuItem[];

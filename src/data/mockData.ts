@@ -1,5 +1,4 @@
-
-import { MenuItem, InventoryItem, User, UserRole } from './types';
+import { MenuItem, InventoryItem, User, UserRole } from '@/types';
 
 export const MOCK_MENU: MenuItem[] = [
   { 

@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { TrendingUp, Users, ShoppingBag, DollarSign, AlertCircle, Plus, Check } from 'lucide-react';
-import { Order, MenuItem, InventoryItem } from '../types';
+import { Order, MenuItem, InventoryItem } from '@/types';
 
 interface DashboardProps {
   orders: Order[];
