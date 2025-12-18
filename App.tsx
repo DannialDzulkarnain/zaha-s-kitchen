@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { HashRouter, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { HashRouter, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import { 
   Coffee, 
   ShoppingCart, 
@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { User, UserRole, MenuItem, Order, InventoryItem, OrderStatus } from './types';
 import { MOCK_USER, MOCK_MENU, MOCK_INVENTORY } from './constants';
+import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import POS from './pages/POS';
 import MenuManagement from './pages/MenuManagement';
@@ -63,8 +64,11 @@ const App: React.FC = () => {
   const Sidebar = () => {
     const location = useLocation();
     
+    // Hide sidebar on landing page
+    if (location.pathname === '/') return null;
+
     const navItems = [
-      { path: '/', label: 'Dashboard', icon: LayoutDashboard, roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.STAFF] },
+      { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.STAFF] },
       { path: '/pos', label: 'POS', icon: ShoppingCart, roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.STAFF] },
       { path: '/kitchen', label: 'Kitchen', icon: ChefHat, roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.STAFF] },
       { path: '/orders', label: 'Orders', icon: ClipboardList, roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.STAFF] },
@@ -87,12 +91,12 @@ const App: React.FC = () => {
         
         <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-stone-900 text-white transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
           <div className="flex items-center justify-between h-20 px-6 border-b border-stone-800">
-            <div className="flex items-center gap-2">
+            <Link to="/" className="flex items-center gap-2">
               <div className="p-2 bg-orange-500 rounded-lg">
                 <Coffee className="w-6 h-6 text-white" />
               </div>
               <span className="text-xl font-bold tracking-tight">Zaha's Kitchen</span>
-            </div>
+            </Link>
             <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-stone-400 hover:text-white">
               <X className="w-6 h-6" />
             </button>
@@ -124,23 +128,24 @@ const App: React.FC = () => {
                 <p className="text-[10px] text-stone-500 uppercase tracking-widest font-bold">{currentUser.role}</p>
               </div>
             </div>
-            <button className="flex items-center gap-3 w-full px-4 py-3 mt-2 text-stone-400 hover:text-red-400 transition-colors group">
+            <Link to="/" className="flex items-center gap-3 w-full px-4 py-3 mt-2 text-stone-400 hover:text-red-400 transition-colors group">
               <LogOut className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              <span className="font-medium">Logout</span>
-            </button>
+              <span className="font-medium">Exit OS</span>
+            </Link>
           </div>
         </div>
       </>
     );
   };
 
-  return (
-    <HashRouter>
-      <div className="flex min-h-screen bg-stone-50">
-        <Sidebar />
-        
-        <main className="flex-1 lg:ml-64 flex flex-col min-h-screen overflow-x-hidden">
-          {/* Mobile Header */}
+  const ContentWrapper = ({ children }: { children: React.ReactNode }) => {
+    const location = useLocation();
+    const isLanding = location.pathname === '/';
+    
+    return (
+      <main className={`flex-1 ${isLanding ? '' : 'lg:ml-64'} flex flex-col min-h-screen overflow-x-hidden`}>
+        {/* Mobile Header (Hidden on landing) */}
+        {!isLanding && (
           <div className="sticky top-0 z-30 flex items-center justify-between p-4 bg-white/80 backdrop-blur-md border-b border-stone-200 lg:hidden">
             <button onClick={() => setSidebarOpen(true)} className="p-2 bg-white rounded-lg shadow-sm border border-stone-200">
               <MenuIcon className="w-6 h-6" />
@@ -149,21 +154,34 @@ const App: React.FC = () => {
               <Coffee className="w-6 h-6 text-orange-500" />
               <span className="text-lg font-bold">Zaha's Kitchen</span>
             </div>
-            <div className="w-10" /> {/* Spacer for centering title */}
+            <div className="w-10" />
           </div>
+        )}
 
-          <div className="p-4 md:p-6 lg:p-8 flex-1">
-            <Routes>
-              <Route path="/" element={<Dashboard orders={orders} menuItems={menuItems} inventory={inventory} />} />
-              <Route path="/pos" element={<POS menuItems={menuItems} onCompleteOrder={(order) => setOrders(prev => [...prev, order])} inventory={inventory} setInventory={setInventory} />} />
-              <Route path="/kitchen" element={<Kitchen orders={orders} updateStatus={updateOrderStatus} />} />
-              <Route path="/orders" element={<OrdersList orders={orders} updateStatus={updateOrderStatus} />} />
-              <Route path="/menu" element={<MenuManagement items={menuItems} setItems={setMenuItems} />} />
-              <Route path="/inventory" element={<InventoryManagement inventory={inventory} setInventory={setInventory} />} />
-              <Route path="/reports" element={<Reports orders={orders} inventory={inventory} />} />
-            </Routes>
-          </div>
-        </main>
+        <div className={isLanding ? '' : 'p-4 md:p-6 lg:p-8 flex-1'}>
+          {children}
+        </div>
+      </main>
+    );
+  };
+
+  return (
+    <HashRouter>
+      <div className="flex min-h-screen bg-stone-50">
+        <Sidebar />
+        <ContentWrapper>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/dashboard" element={<Dashboard orders={orders} menuItems={menuItems} inventory={inventory} />} />
+            <Route path="/pos" element={<POS menuItems={menuItems} onCompleteOrder={(order) => setOrders(prev => [...prev, order])} inventory={inventory} setInventory={setInventory} />} />
+            <Route path="/kitchen" element={<Kitchen orders={orders} updateStatus={updateOrderStatus} />} />
+            <Route path="/orders" element={<OrdersList orders={orders} updateStatus={updateOrderStatus} />} />
+            <Route path="/menu" element={<MenuManagement items={menuItems} setItems={setMenuItems} />} />
+            <Route path="/inventory" element={<InventoryManagement inventory={inventory} setInventory={setInventory} />} />
+            <Route path="/reports" element={<Reports orders={orders} inventory={inventory} />} />
+            <Route path="*" element={<Navigate to="/" />} />
+          </Routes>
+        </ContentWrapper>
       </div>
     </HashRouter>
   );
